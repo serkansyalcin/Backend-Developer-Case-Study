@@ -20,22 +20,27 @@
                                 <thead>
                                     <tr>
                                         <th scope="col"></th>
-                                        <th scope="col">DEV1</th>
-                                        <th scope="col">DEV2</th>
-                                        <th scope="col">DEV3</th>
-                                        <th scope="col">DEV4</th>
-                                        <th scope="col">DEV5</th>
+                                        @foreach($weekly_tasks as $name => $task)
+                                        <th scope="col">{{$name}}</th>
+                                        @endforeach
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @for($i = 1; $i <= $minimum_weeks; $i++)
                                     <tr>
-                                        <th scope="row">Week 1</th>
-                                        <td>Task 1, Task 2</td>
-                                        <td>Task 3, Task 4</td>
-                                        <td>Task 5, Task 6</td>
-                                        <td>Task 7, Task 8</td>
-                                        <td>Task 9, Task 10</td>
+                                        <th scope="row">Week {{$i}}</th>
+                                        @foreach($weekly_tasks as $name => $task)
+                                            <td>
+                                                @forelse($task['tasks'][$i] as $_task)
+                                                {{$_task['name']}} {{!$loop->last ? ',' : ''}}
+                                                @empty
+                                                 -
+                                                @endforelse
+                                            </td>
+                                        @endforeach
+                                        
                                     </tr>
+                                    @endfor
                                 </tbody>
                             </table>
                         </div>
