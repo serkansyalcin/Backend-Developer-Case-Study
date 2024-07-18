@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('provider_name')->nullable();
             $table->string('name')->nullanle();
-            $table->time('duration')->nullable();
+            $table->integer('duration')->nullable();
             $table->integer('difficulty_level')->default(1);
             $table->timestamps();
         });
