@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
-
+use App\Services\DataService;
 class TaskController extends Controller
 {
+    protected $dataService;
+
+    public function __construct(DataService $dataService)
+    {
+        $this->dataService = $dataService;
+    }
+
     public function index(){
-        $tasks = Task::whereNotNull('difficulty_level')->orderBy('difficulty_level', 'DESC')->get();
+        $tasks = $data = $this->dataService->getByConditionAndOrderBy([], ['difficulty_level' => 'DESC']);
         $developers = [
             'DEV1' => ['duration' => 45, 'difficulty_level' => 1],
             'DEV2' => ['duration' => 45, 'difficulty_level' => 2],
