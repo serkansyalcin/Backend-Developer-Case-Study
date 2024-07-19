@@ -17,11 +17,11 @@ class TaskController extends Controller
     public function index(){
         $tasks = $data = $this->dataService->getByConditionAndOrderBy([], ['difficulty_level' => 'DESC']);
         $developers = [
-            'DEV1' => ['duration' => 45, 'difficulty_level' => 1],
-            'DEV2' => ['duration' => 45, 'difficulty_level' => 2],
-            'DEV3' => ['duration' => 45, 'difficulty_level' => 3],
-            'DEV4' => ['duration' => 45, 'difficulty_level' => 4],
             'DEV5' => ['duration' => 45, 'difficulty_level' => 5],
+            'DEV4' => ['duration' => 45, 'difficulty_level' => 4],
+            'DEV3' => ['duration' => 45, 'difficulty_level' => 3],
+            'DEV2' => ['duration' => 45, 'difficulty_level' => 2],
+            'DEV1' => ['duration' => 45, 'difficulty_level' => 1],
         ];
 
         $weeks = 0;
@@ -46,16 +46,15 @@ class TaskController extends Controller
                 
                 foreach ($developersWorkload as $dev => $workload) {
                     
-                    if ($workload['difficulty_level'] >= $task['difficulty_level'] && $workload['capacity'] >= $task['duration']) {
+                    if ($workload['difficulty_level'] <= $task['difficulty_level']) {
                         $developersWorkload[$dev]['tasks'][$weeks][] = $task;
-                        $developersWorkload[$dev]['capacity'] -= $task['duration'];
+                        $developersWorkload[$dev]['capacity'] -= $task['difficulty_level']/$workload['difficulty_level'];
                         unset($tasks[$key]);
                        // $tasks = $tasks->values();
                         break;
                     }
                 }
             }
-
             foreach ($developersWorkload as $dev => &$workload) {
                 $workload['capacity'] = $developers[$dev]['duration'];
             }
