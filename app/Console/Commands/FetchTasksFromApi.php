@@ -13,7 +13,7 @@ class FetchTasksFromApi extends Command
      *
      * @var string
      */
-    protected $signature = 'app:fetch-tasks-from-api  {--mock_url=}';  //php artisan app:fetch-tasks-from-api  --mock_url=mock-one / php artisan app:fetch-tasks-from-api  --mock_url=mock-two
+    protected $signature = 'app:fetch-tasks-from-api {--mock_url=} {--field_mapping=}';  //php artisan app:fetch-tasks-from-api  --mock_url=mock-one --field_mapping='{"name":"<api-name-key>", "duration":"<api-duration-key>", "difficulty_level":"<api-difficulty-key>"}'
 
     /**
      * The console command description.
@@ -36,6 +36,8 @@ class FetchTasksFromApi extends Command
     public function handle()
     {
         $mock_url = $this->option('mock_url');
+        $field_mapping = $this->option('field_mapping');
+        $field_mapping = json_decode($field_mapping, true);
         $api_response = Http::get('https://raw.githubusercontent.com/WEG-Technology/mock/main/'.$mock_url, []);
         $api_response = json_decode($api_response, true);
         $tasks = [];
@@ -43,9 +45,9 @@ class FetchTasksFromApi extends Command
         foreach($api_response as $_task){
             $tasks[] = [
                 'provider_name' => $mock_url,
-                'name' => $mock_url.' Task '.array_values($_task)[0],
-                'duration' => array_values($_task)[2],
-                'difficulty_level' => array_values($_task)[1]
+                'name' => isset($field_mapping['name']) ? $_task[$field_mapping['name']] : $mock_url.' Task '.array_values($_task)[0],
+                'duration' => isset($field_mapping['duration']) ? $_task[$field_mapping['duration']] : array_values($_task)[2],
+                'difficulty_level' => isset($field_mapping['difficulty_level']) ? $_task[$field_mapping['difficulty_level']] : array_values($_task)[1]
             ];
         }
         $this->dataService->storeData($tasks);
